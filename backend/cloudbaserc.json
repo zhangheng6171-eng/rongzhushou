@@ -1,0 +1,276 @@
+{
+  "version": "2.0",
+  "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+  "envId": "{{envId}}",
+  "framework": {
+    "name": "rongzhi-assistant",
+    "plugins": {}
+  },
+  "functions": [
+    {
+      "name": "user-register",
+      "handler": "user/register.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "user-login",
+      "handler": "user/login.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "user-profile",
+      "handler": "user/profile.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "user-logout",
+      "handler": "user/logout.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 5,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "user-sms",
+      "handler": "user/sms.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 15,
+      "environmentVariables": {
+        "TENCENT_SECRET_ID": "{{tencentSecretId}}",
+        "TENCENT_SECRET_KEY": "{{tencentSecretKey}}",
+        "SMS_APP_ID": "{{smsAppId}}",
+        "SMS_TEMPLATE_ID": "{{smsTemplateId}}",
+        "SMS_SIGN": "{{smsSign}}"
+      },
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "article-list",
+      "handler": "article/list.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "article-detail",
+      "handler": "article/detail.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "article-categories",
+      "handler": "article/categories.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "ai-chat",
+      "handler": "ai/chat.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 512,
+      "timeout": 30,
+      "environmentVariables": {
+        "AI_API_KEY": "{{aiApiKey}}",
+        "AI_MODEL": "{{aiModel}}"
+      },
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "ai-history",
+      "handler": "ai/history.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "loan-calculate",
+      "handler": "loan/calculate.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "loan-products",
+      "handler": "loan/products.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "order-create",
+      "handler": "order/create.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 15,
+      "environmentVariables": {
+        "WECHAT_APP_ID": "{{wechatAppId}}"
+      },
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "order-pay",
+      "handler": "order/pay.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 15,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "order-list",
+      "handler": "order/list.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "member-subscribe",
+      "handler": "member/subscribe.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 15,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    },
+    {
+      "name": "member-status",
+      "handler": "member/status.main",
+      "runtime": "Nodejs16.13",
+      "memorySize": 256,
+      "timeout": 10,
+      "environmentVariables": {},
+      "vpc": {
+        "vpcId": "{{vpcId}}",
+        "subnetId": "{{subnetId}}"
+      }
+    }
+  ],
+  "database": [
+    {
+      "collectionName": "users",
+      "description": "用户表"
+    },
+    {
+      "collectionName": "articles",
+      "description": "文章表"
+    },
+    {
+      "collectionName": "article_categories",
+      "description": "文章分类表"
+    },
+    {
+      "collectionName": "article_likes",
+      "description": "文章点赞表"
+    },
+    {
+      "collectionName": "user_favorites",
+      "description": "用户收藏表"
+    },
+    {
+      "collectionName": "user_logs",
+      "description": "用户日志表"
+    },
+    {
+      "collectionName": "ai_sessions",
+      "description": "AI对话会话表"
+    },
+    {
+      "collectionName": "ai_chat_logs",
+      "description": "AI对话记录表"
+    },
+    {
+      "collectionName": "loan_products",
+      "description": "贷款产品表"
+    },
+    {
+      "collectionName": "orders",
+      "description": "订单表"
+    },
+    {
+      "collectionName": "payment_logs",
+      "description": "支付日志表"
+    },
+    {
+      "collectionName": "coupons",
+      "description": "优惠券表"
+    }
+  ]
+}

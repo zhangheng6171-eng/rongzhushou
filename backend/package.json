@@ -1,0 +1,17 @@
+{
+  "name": "passive-income-platform-backend",
+  "version": "1.0.0",
+  "description": "融智助手 - 小微企业融资智能平台后端",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "tcb fn deploy --force"
+  },
+  "dependencies": {
+    "tcb-admin-node": "^1.8.6",
+    "jsonwebtoken": "^9.0.2",
+    "tencentcloud-sdk-nodejs-nodejs": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudbase/cli": "^1.12.0"
+  }
+}
