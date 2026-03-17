@@ -1,9 +1,7 @@
 import jwt from 'jsonwebtoken'
+import { supabase, memoryStorage } from '../lib/db.js'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'rongzhushou-secret-2026'
-
-// 模拟用户数据库
-const users = new Map()
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -33,24 +31,61 @@ export default async function handler(req, res) {
       return res.status(400).json({ code: 400, message: '请输入验证码或密码' })
     }
 
-    // 查找或创建用户
-    let user = users.get(phone)
-    if (!user) {
-      user = {
-        id: `user_${Date.now()}`,
-        phone,
-        nickname: `用户${phone.slice(-4)}`,
-        avatar: '',
-        vipLevel: 0,
-        vipExpireTime: null,
-        points: 100,
-        createdAt: new Date().toISOString()
+    let user
+
+    if (supabase) {
+      // 使用 Supabase
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('phone', phone)
+        .single()
+
+      if (error && error.code !== 'PGRST116') {
+        throw error
       }
-      users.set(phone, user)
+
+      if (data) {
+        user = data
+      } else {
+        // 创建新用户
+        const { data: newUser, error: createError } = await supabase
+          .from('users')
+          .insert({
+            phone,
+            nickname: `用户${phone.slice(-4)}`,
+            points: 100
+          })
+          .select()
+          .single()
+
+        if (createError) throw createError
+        user = newUser
+      }
+    } else {
+      // 使用内存存储
+      user = memoryStorage.users.get(phone)
+      if (!user) {
+        user = {
+          id: `user_${Date.now()}`,
+          phone,
+          nickname: `用户${phone.slice(-4)}`,
+          avatar: '',
+          vip_level: 0,
+          vip_expire_time: null,
+          points: 100,
+          created_at: new Date().toISOString()
+        }
+        memoryStorage.users.set(phone, user)
+      }
     }
 
     const token = jwt.sign(
-      { userId: user.id, phone: user.phone, vipLevel: user.vipLevel },
+      { 
+        userId: user.id, 
+        phone: user.phone, 
+        vipLevel: user.vip_level || 0 
+      },
       JWT_SECRET,
       { expiresIn: '7d' }
     )
@@ -64,10 +99,10 @@ export default async function handler(req, res) {
           id: user.id,
           phone: user.phone,
           nickname: user.nickname,
-          avatar: user.avatar,
-          vipLevel: user.vipLevel,
-          vipExpireTime: user.vipExpireTime,
-          points: user.points
+          avatar: user.avatar || '',
+          vipLevel: user.vip_level || 0,
+          vipExpireTime: user.vip_expire_time || null,
+          points: user.points || 100
         }
       }
     })

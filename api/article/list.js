@@ -1,60 +1,4 @@
-const articles = [
-  {
-    id: 1,
-    title: '2026年小微企业贷款政策解读',
-    summary: '最新小微企业贷款政策分析，帮助企业主了解优惠政策和申请条件。',
-    category: '政策解读',
-    tags: ['贷款政策', '小微企业', '优惠'],
-    viewCount: 1234,
-    likeCount: 89,
-    publishTime: '2026-03-15T10:00:00Z',
-    isVipOnly: false
-  },
-  {
-    id: 2,
-    title: '如何提高贷款审批通过率？',
-    summary: '掌握这些技巧，让您的贷款申请更容易获批。',
-    category: '贷款技巧',
-    tags: ['审批技巧', '贷款申请'],
-    viewCount: 856,
-    likeCount: 67,
-    publishTime: '2026-03-14T10:00:00Z',
-    isVipOnly: false
-  },
-  {
-    id: 3,
-    title: '小微企业税收优惠政策汇总',
-    summary: '2026年小微企业可享受的税收优惠政策详解。',
-    category: '税务筹划',
-    tags: ['税收优惠', '小微企业'],
-    viewCount: 678,
-    likeCount: 45,
-    publishTime: '2026-03-13T10:00:00Z',
-    isVipOnly: true
-  },
-  {
-    id: 4,
-    title: '贷款计算器使用指南',
-    summary: '手把手教您使用贷款计算器，精准计算贷款成本。',
-    category: '工具使用',
-    tags: ['贷款计算器', '使用指南'],
-    viewCount: 432,
-    likeCount: 28,
-    publishTime: '2026-03-12T10:00:00Z',
-    isVipOnly: false
-  },
-  {
-    id: 5,
-    title: '银行贷款产品对比分析',
-    summary: '主流银行小微企业贷款产品详细对比。',
-    category: '产品分析',
-    tags: ['银行贷款', '产品对比'],
-    viewCount: 567,
-    likeCount: 34,
-    publishTime: '2026-03-11T10:00:00Z',
-    isVipOnly: false
-  }
-]
+import { supabase, memoryStorage } from '../lib/db.js'
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -67,33 +11,64 @@ export default async function handler(req, res) {
   try {
     const { page = 1, pageSize = 10, category, keyword } = req.query
 
-    let filtered = [...articles]
+    let articles
+    let total
 
-    if (category && category !== 'all') {
-      filtered = filtered.filter(a => a.category === category)
+    if (supabase) {
+      // 使用 Supabase
+      let query = supabase
+        .from('articles')
+        .select('*', { count: 'exact' })
+        .eq('is_published', true)
+        .order('publish_time', { ascending: false })
+
+      if (category && category !== 'all') {
+        query = query.eq('category', category)
+      }
+
+      if (keyword) {
+        query = query.or(`title.ilike.%${keyword}%,summary.ilike.%${keyword}%`)
+      }
+
+      const start = (parseInt(page) - 1) * parseInt(pageSize)
+      query = query.range(start, start + parseInt(pageSize) - 1)
+
+      const { data, error, count } = await query
+
+      if (error) throw error
+
+      articles = data
+      total = count
+    } else {
+      // 使用内存存储
+      let filtered = [...memoryStorage.articles]
+
+      if (category && category !== 'all') {
+        filtered = filtered.filter(a => a.category === category)
+      }
+
+      if (keyword) {
+        const kw = keyword.toLowerCase()
+        filtered = filtered.filter(a => 
+          a.title.toLowerCase().includes(kw) ||
+          a.summary.toLowerCase().includes(kw)
+        )
+      }
+
+      total = filtered.length
+      const start = (parseInt(page) - 1) * parseInt(pageSize)
+      const end = start + parseInt(pageSize)
+      articles = filtered.slice(start, end)
     }
-
-    if (keyword) {
-      const kw = keyword.toLowerCase()
-      filtered = filtered.filter(a => 
-        a.title.toLowerCase().includes(kw) ||
-        a.summary.toLowerCase().includes(kw) ||
-        a.tags.some(t => t.toLowerCase().includes(kw))
-      )
-    }
-
-    const start = (parseInt(page) - 1) * parseInt(pageSize)
-    const end = start + parseInt(pageSize)
-    const list = filtered.slice(start, end)
 
     return res.status(200).json({
       code: 0,
       data: {
-        list,
-        total: filtered.length,
+        list: articles,
+        total,
         page: parseInt(page),
         pageSize: parseInt(pageSize),
-        hasMore: end < filtered.length
+        hasMore: (parseInt(page) * parseInt(pageSize)) < total
       }
     })
   } catch (error) {
